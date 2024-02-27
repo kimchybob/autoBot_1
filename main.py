@@ -32,9 +32,9 @@ def login(driver):
 
         pwd = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
 
-        email.send_keys("kimchybob@gmail.com")
+        email.send_keys("")
 
-        pwd.send_keys("tom518xwJ!")
+        pwd.send_keys("")
 
         driver.find_element(By.XPATH, '//*[@id="signin_seekanz"]/div/div[4]/div/div[1]/button').click()
 
