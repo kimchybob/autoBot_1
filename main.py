@@ -112,7 +112,7 @@ def apply():
         quickApply = WebDriverWait(quickDriver, 10).until(EC.presence_of_element_located((By.XPATH, '//a[contains(@data-automation, "job-detail-apply")]')))
 
         if quickApply.text != "Quick apply":
-            toFile('\'' + curUrl + '\'', 'external.py')
+            toFile('\'' + curUrl + '\'', 'external.txt')
             return False
 
         quickApply.click()
