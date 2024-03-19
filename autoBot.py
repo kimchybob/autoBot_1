@@ -19,22 +19,22 @@ quickDriver = webdriver.Chrome(ChromeDriverManager().install())
 
 foundApplied = False
 baseURL = "https://www.seek.com.au/jobs-in-information-communication-technology?salaryrange=90000-&salarytype=annual&sortmode=ListedDate&subclassification=6285%2C6287%2C6302%2C6303%2C6290&worktype=242%2C244&page="
-blockedKeywords = ['AEM ', '365', 'Salesforce', 'BI ', 'SAP ','Net ', 'C#', 'lead', 'Business', 'C++','EPM', 'cyber', 'ServiceNow',
+blockedKeywords = ['AEM ', '365', 'Salesforce', 'BI ', 'SAP ','Net ', 'C#', 'lead', 'Business', 'C++','EPM', 'cyber', 'ServiceNow', 'Graduate',
                    'Trainer','Coordinator','Training','Dynamics','PeopleSoft','Sharepoint','CDM','Designer', 'bpm', 'ios', 'devops',
                    'D365','CRM','PHP','Officer','Golang','Manager','ETL','Onboarding','Principal','Director', 'servicenow']
 
 def login(driver):
     try:
         # Attempt to find the login element
-        driver.find_element(By.XPATH,'//*[@id="app"]/div/div[4]/div[2]/div/div/div[1]/div[2]/div[1]/div/div/div/div/div/a').click()
+        driver.find_element(By.XPATH, '//*[@id="app"]/div/div[4]/div[2]/div/div/div[1]/div[3]/div[1]/div/div/div/div/div/a').click()
 
         email = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="emailAddress"]')))
 
         pwd = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
 
-        email.send_keys("")
+        email.send_keys("kim.xu96@outlook.com")
 
-        pwd.send_keys("")
+        pwd.send_keys("tomS518xwJ!")
 
         driver.find_element(By.XPATH, '//*[@id="signin_seekanz"]/div/div[4]/div/div[1]/button').click()
 
@@ -51,15 +51,19 @@ def creatNewTab(drive):
 
 def findElementsUntilApplied(elements):
     output= []
+    count = 0
     for element in elements:
+        # output.append(element.find_element(By.XPATH, './/a[contains(@id,"job-title")]'))
 
         try:
             # Try to find the specific element within the current element
             element.find_element(By.XPATH, './/span[@aria-hidden="true" and contains(text(), "Applied")]')
-            global foundApplied
-            foundApplied = True
-            # If found, break out of the loop
-            break
+            count += 1
+            if count > 1:
+                global foundApplied
+                foundApplied = True
+                # If found, break out of the loop
+                break
 
         except NoSuchElementException:
             output.append(element.find_element(By.XPATH, './/a[contains(@id,"job-title")]'))
@@ -92,7 +96,7 @@ def getJobs(driver):
     print(len(unappliedURL))
     return unappliedURL
 
-def apply():
+def apply(title):
 
     login(quickDriver)
 
@@ -112,7 +116,7 @@ def apply():
         quickApply = WebDriverWait(quickDriver, 10).until(EC.presence_of_element_located((By.XPATH, '//a[contains(@data-automation, "job-detail-apply")]')))
 
         if quickApply.text != "Quick apply":
-            toFile('\'' + curUrl + '\'', 'external.py')
+            toFile(title + '  ' + '\'' + curUrl + '\'', 'external.py')
             return False
 
         quickApply.click()
@@ -141,27 +145,27 @@ def apply():
         print(e)
         return True
 
-def traverse(listUrl):
+def traverse(lines):
     newTab = False
     index = 0
 
-    for url in listUrl:
+    for line in lines:
         print(index)
         index += 1
 
         if newTab:
             creatNewTab(quickDriver)
 
-        quickDriver.get(url)
+        quickDriver.get(line.split('url is: ')[1])
 
-        newTab = apply()
+        newTab = apply(line.split('url is: ')[0])
 
 
 
 def main():
-    getJobs(quickDriver)
-    # list = readFile()
-    # traverse(list)
+    # getJobs(quickDriver)
+    list = readFile()
+    traverse(list)
 
 def toFile(item, path):
     # Open the file for writing
@@ -172,10 +176,9 @@ def readFile():
     with open('unappliedURL.txt', 'r') as file:
         lines = file.readlines()
     # Remove leading and trailing whitespaces, and create a list
-    string_list = [line.split('url is: ')[1] for line in lines]
+    # string_list = [line.split('url is: ')[1] for line in lines]
 
-    return string_list
+    return lines
 
 
 main()
-
