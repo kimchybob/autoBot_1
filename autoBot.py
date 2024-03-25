@@ -1,4 +1,5 @@
 import json
+import os
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
@@ -7,6 +8,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+emailAddress = os.getenv('EMAIL')
+password = os.getenv('PASSWD')
 
 
 chrome_options = webdriver.ChromeOptions()
@@ -15,7 +21,7 @@ prefs = {'credentials_enable_service':False,'profile.password_manager_enabled':F
 chrome_options.add_experimental_option('prefs',prefs)
 chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 
-quickDriver = webdriver.Chrome(ChromeDriverManager().install())
+quickDriver = webdriver.Chrome()
 
 foundApplied = False
 baseURL = "https://www.seek.com.au/jobs-in-information-communication-technology?salaryrange=90000-&salarytype=annual&sortmode=ListedDate&subclassification=6285%2C6287%2C6302%2C6303%2C6290&worktype=242%2C244&page="
@@ -32,9 +38,9 @@ def login(driver):
 
         pwd = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
 
-        email.send_keys("kim.xu96@outlook.com")
+        email.send_keys(emailAddress)
 
-        pwd.send_keys("tomS518xwJ!")
+        pwd.send_keys(password)
 
         driver.find_element(By.XPATH, '//*[@id="signin_seekanz"]/div/div[4]/div/div[1]/button').click()
 
@@ -100,9 +106,12 @@ def apply(title):
 
     login(quickDriver)
 
-    applied = quickDriver.find_elements_by_xpath('//span[contains(text(), "You\'ve applied on ")]')
-    if applied:
-        return False
+    try:
+        applied = quickDriver.find_element(By.XPATH,'//span[contains(text(), "You\'ve applied on ")]')
+        if applied:
+            return False
+    except NoSuchElementException:
+        pass
 
 
     # blockStatus = ["citizen","clearance","Citizen","Clearance"]
@@ -116,16 +125,19 @@ def apply(title):
         quickApply = WebDriverWait(quickDriver, 10).until(EC.presence_of_element_located((By.XPATH, '//a[contains(@data-automation, "job-detail-apply")]')))
 
         if quickApply.text != "Quick apply":
-            toFile(title + '  ' + '\'' + curUrl + '\'', 'external.txt')
+            toFile(title + '  ' + '\'' + curUrl + '\'', 'external.py')
             return False
 
         quickApply.click()
 
         while True:
             try:
-                elements = quickDriver.find_elements_by_xpath('//*[@id="errorPanel"]')
+                elements = quickDriver.find_element(By.XPATH,'//*[@id="errorPanel"]')
                 if elements:
                     return True
+            except NoSuchElementException:
+                pass
+            try:
                 next = WebDriverWait(quickDriver, 10).until(
                     EC.presence_of_element_located((By.XPATH, '//button[contains(@data-testid, "continue-button")]')))
 
