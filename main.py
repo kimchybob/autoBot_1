@@ -23,6 +23,8 @@ blockedKeywords = ['AEM ', '365', 'Salesforce', 'BI ', 'SAP ','Net ', 'C#', 'lea
                    'Trainer','Coordinator','Training','Dynamics','PeopleSoft','Sharepoint','CDM','Designer', 'bpm', 'ios', 'devops',
                    'D365','CRM','PHP','Officer','Golang','Manager','ETL','Onboarding','Principal','Director', 'servicenow']
 
+
+
 def login(driver):
     try:
         # Attempt to find the login element

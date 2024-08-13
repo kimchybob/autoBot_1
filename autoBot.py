@@ -26,23 +26,26 @@ quickDriver = webdriver.Chrome()
 foundApplied = False
 baseURL = "https://www.seek.com.au/jobs-in-information-communication-technology?salaryrange=90000-&salarytype=annual&sortmode=ListedDate&subclassification=6285%2C6287%2C6302%2C6303%2C6290&worktype=242%2C244&page="
 blockedKeywords = ['AEM ', '365', 'Salesforce', 'BI ', 'SAP ','Net ', 'C#', 'lead', 'Business', 'C++','EPM', 'cyber', 'ServiceNow', 'Graduate',
-                   'Trainer','Coordinator','Training','Dynamics','PeopleSoft','Sharepoint','CDM','Designer', 'bpm', 'ios', 'devops',
+                   'Trainer','Coordinator','Training','Dynamics','PeopleSoft','Sharepoint','CDM','Designer', 'bpm', 'ios', 'ops',
+                   'support','process', 'intern','data','Analyst', 'pega',
                    'D365','CRM','PHP','Officer','Golang','Manager','ETL','Onboarding','Principal','Director', 'servicenow']
 
 def login(driver):
     try:
         # Attempt to find the login element
-        driver.find_element(By.XPATH, '//*[@id="app"]/div/div[4]/div[2]/div/div/div[1]/div[3]/div[1]/div/div/div/div/div/a').click()
+        loginEntry = driver.find_element(By.XPATH, '//*[@id="app"]/div/div[3]/div[2]/div/div/div[1]/div[2]/div[1]/div/div/div/div/div/a')
+        loginEntry.click()
 
-        email = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="emailAddress"]')))
+        emailField = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="emailAddress"]')))
 
-        pwd = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
+        pwdField = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="password"]')))
 
-        email.send_keys(emailAddress)
+        emailField.send_keys(emailAddress)
 
-        pwd.send_keys(password)
+        pwdField.send_keys(password)
 
-        driver.find_element(By.XPATH, '//*[@id="signin_seekanz"]/div/div[4]/div/div[1]/button').click()
+        loginButton = (driver.find_element(By.XPATH, '//*[@id="signin_seekanz"]/div/div[4]/div/div[1]/button'))
+        loginButton.click()
 
         time.sleep(5)
 
@@ -78,7 +81,7 @@ def findElementsUntilApplied(elements):
 def getJobs(driver):
 
     page = 1
-    dateRange = "&daterange=7"
+    dateRange = "&daterange=17"
     unappliedURL = []
 
     while not foundApplied:
@@ -175,9 +178,9 @@ def traverse(lines):
 
 
 def main():
-    # getJobs(quickDriver)
-    list = readFile()
-    traverse(list)
+    getJobs(quickDriver)
+    # list = readFile()
+    # traverse(list)
 
 def toFile(item, path):
     # Open the file for writing
